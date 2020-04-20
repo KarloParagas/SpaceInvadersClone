@@ -1,0 +1,2 @@
+rootProject.name='SpaceInvadersClone'
+include ':app'
