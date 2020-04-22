@@ -93,6 +93,7 @@ public class GameEngine extends SurfaceView implements Runnable {
      */
     private void startLevel() {
         //Create a player
+        player = new Player(context, screenX, screenY);
 
         //Create the player's bullet
 
@@ -140,6 +141,7 @@ public class GameEngine extends SurfaceView implements Runnable {
         boolean didLose = false;
 
         //Move the player
+        player.update(fps);
 
         //Update the enemies if they're visible
 
@@ -184,6 +186,9 @@ public class GameEngine extends SurfaceView implements Runnable {
             paint.setColor(Color.argb(255, 0, 255, 0));
 
             //Draw the player
+            //Note: drawBitmap(bitmap from the player object, x start position from the player object,
+            //                 y start position from the player object, paint the player object)
+            canvas.drawBitmap(player.getBitmap(), player.getX(), screenY - player.getHeight(), paint);
 
             //Draw the enemy
 
