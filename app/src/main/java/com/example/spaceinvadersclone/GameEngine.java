@@ -48,6 +48,9 @@ public class GameEngine extends SurfaceView implements Runnable {
     //The player object
     private Player player;
 
+    //The player bullet
+    private Bullet playerBullet;
+
     //Bricks that the player can use for defensive cover
     private Brick[] bricks = new Brick[100];
     private int numBricks;
@@ -96,8 +99,12 @@ public class GameEngine extends SurfaceView implements Runnable {
         player = new Player(context, screenX, screenY);
 
         //Create the player's bullet
+        playerBullet = new Bullet(screenY);
 
-        //Initialize the enemyBullets array
+        //Create the enemyBullets array
+        for (int i = 0; i < enemyBullets.length; i++) {
+            enemyBullets[i] = new Bullet(screenY);
+        }
 
         //Create an army of enemies
 
@@ -145,7 +152,17 @@ public class GameEngine extends SurfaceView implements Runnable {
 
         //Update the enemies if they're visible
 
+        //Update the player's bullet
+        if (playerBullet.getBulletState()) { //If the player has fired a bullet
+            playerBullet.update(fps);
+        }
+
         //Update all of the enemy's bullets if they're active
+        for (int i = 0; i < enemyBullets.length; i++) {
+            if (enemyBullets[i].getBulletState()) {
+                enemyBullets[i].update(fps);
+            }
+        }
 
         //Has an enemy collided with the sides of the screen
 
@@ -154,8 +171,6 @@ public class GameEngine extends SurfaceView implements Runnable {
             //Restart the game
             startLevel();
         }
-
-        //Update the player's bullet
 
         //Keep track if the player's bullet have collided with the top of the screen
 
@@ -195,8 +210,16 @@ public class GameEngine extends SurfaceView implements Runnable {
             //Draw the bricks if they're visible
 
             //Draw the player's bullets, if they're active
+            if (playerBullet.getBulletState()) {
+                canvas.drawRect(playerBullet.getBullet(), paint);
+            }
 
             //Draw the enemy's bullets, if they're active
+            for (int i = 0; i < enemyBullets.length; i++) {
+                if (enemyBullets[i].getBulletState()) {
+                    canvas.drawRect(enemyBullets[i].getBullet(), paint);
+                }
+            }
 
             //Draw the remaining lives
 
