@@ -195,7 +195,7 @@ public class GameEngine extends SurfaceView implements Runnable {
             canvas = surfaceHolder.lockCanvas();
 
             //Draw the background color
-            canvas.drawColor(Color.argb(255, 55, 55, 55));
+            canvas.drawColor(Color.argb(255, 35, 35, 35));
 
             //Change the brush color
             paint.setColor(Color.argb(255, 0, 255, 0));
@@ -208,6 +208,9 @@ public class GameEngine extends SurfaceView implements Runnable {
             //Draw the enemy
 
             //Draw the bricks if they're visible
+
+            //Change the brush color
+            paint.setColor(Color.argb(255, 255, 0, 0));
 
             //Draw the player's bullets, if they're active
             if (playerBullet.getBulletState()) {
@@ -247,10 +250,39 @@ public class GameEngine extends SurfaceView implements Runnable {
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
             //If the player touches the screen
             case MotionEvent.ACTION_DOWN:
+                isPaused = false;
+
+                //If the player touches the lower 8th of the screen
+                //That's when the player will moving left or right
+                if (motionEvent.getY() > screenY - screenY /8) {
+                    //If the player touches the "positive" half side of the screen,
+                    //that means the player wants to go right
+                    if (motionEvent.getX() > screenX / 2) {
+                        player.setPlayerMovement(player.RIGHT);
+                    }
+                    else { //Else, the player must be touching the "negative" half side of the screen
+                        player.setPlayerMovement(player.LEFT);
+                    }
+                }
+
+                //If the player touches ABOVE the lower 8th of the screen, shoot a bullet
+                if (motionEvent.getY() < screenY - screenY / 8) {
+                    //Call bullet's shoot method
+                    playerBullet.shoot(
+                            //Player object's x coordinate/position + the center of the player object (getLength() / 2) which will cause the bullet to come out from the center
+                            player.getX() + player.getLength() / 2,
+                            screenY, //Player object's current Y position
+                            playerBullet.UP //Trajectory of the bullet
+                    );
+                }
                 break;
 
             //If the player takes their finger off of the screen
             case MotionEvent.ACTION_UP:
+                //If the player has removed their finger off from the area of the screen at the bottom 10th
+                if (motionEvent.getY() > screenY - screenY / 10) {
+                    player.setPlayerMovement(player.STOP);
+                }
                 break;
         }
         return true;
