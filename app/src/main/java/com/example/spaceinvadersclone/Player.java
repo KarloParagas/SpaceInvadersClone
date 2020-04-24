@@ -6,18 +6,18 @@ import android.graphics.BitmapFactory;
 import android.graphics.RectF;
 
 public class Player {
-    //Player object
-    RectF player;
+    //Player object which acts as the hit box
+    RectF playerHitBox;
 
     //The player avatar will be represented by a Bitmap
     //https://developer.android.com/reference/android/graphics/Bitmap.html
     private Bitmap bitmap;
 
-    //Dimensions of the player avatar
-    private float length;
-    private float height;
+    //Dimensions of the player hit box
+    private float hitBoxLength;
+    private float hitBoxHeight;
 
-    //The horizontal and vertical coordinate of the player object
+    //The horizontal and vertical coordinate of the player object/hit box
     private float x;
     private float y;
 
@@ -39,21 +39,21 @@ public class Player {
      * @param screenY comes from the GameEngine class' when a player object is created
      */
     public Player(Context context, int screenX, int screenY) {
-        //Initialize the player object
-        player = new RectF();
+        //Initialize the player hit box
+        playerHitBox = new RectF();
 
-        length = screenX / 10;
-        height = screenY / 10;
+        hitBoxLength = screenX / 10;
+        hitBoxHeight = screenY / 10;
 
         //Start the player in the center of the screen
         x = screenX / 2;
-        y = screenY - height;
+        y = screenY - hitBoxHeight;
 
         //Initialize the bitmap
         bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.playeravatar);
 
         //Adjust the bitmap size appropriate for the screen resolution
-        bitmap = Bitmap.createScaledBitmap(bitmap, (int) length, (int) height, false);
+        bitmap = Bitmap.createScaledBitmap(bitmap, (int) hitBoxLength, (int) hitBoxHeight, false);
 
         //Initialize the player's speed
         playerSpeed = 350;
@@ -63,8 +63,8 @@ public class Player {
      * Getter method so other classes can use the player object
      * @return a copy of the player object
      */
-    public RectF getPlayer() {
-        return player;
+    public RectF getPlayerHitBox() {
+        return playerHitBox;
     }
 
     /**
@@ -85,15 +85,15 @@ public class Player {
     /**
      * Getter method to access the current value stored in the height field
      */
-    public float getHeight() {
-        return height;
+    public float getHitBoxHeight() {
+        return hitBoxHeight;
     }
 
     /**
      * Getter method to access the current value stored in the length field
      */
-    public float getLength() {
-        return length;
+    public float getHitBoxLength() {
+        return hitBoxLength;
     }
 
     /**
@@ -116,9 +116,9 @@ public class Player {
 
         //Update the player object with it's new coordinates from it's movement
         //so it can be used to determine if the player has collided with another object
-        player.top = y;
-        player.bottom = y + height;
-        player.left = x;
-        player.right = x + length;
+        playerHitBox.top = y;
+        playerHitBox.bottom = y + hitBoxHeight;
+        playerHitBox.left = x;
+        playerHitBox.right = x + hitBoxLength;
     }
 }

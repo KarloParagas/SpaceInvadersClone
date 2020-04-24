@@ -203,7 +203,7 @@ public class GameEngine extends SurfaceView implements Runnable {
             //Draw the player
             //Note: drawBitmap(bitmap from the player object, x start position from the player object,
             //                 y start position from the player object, paint the player object)
-            canvas.drawBitmap(player.getBitmap(), player.getX(), screenY - player.getHeight(), paint);
+            canvas.drawBitmap(player.getBitmap(), player.getX(), screenY - player.getHitBoxHeight(), paint);
 
             //Draw the enemy
 
@@ -270,7 +270,7 @@ public class GameEngine extends SurfaceView implements Runnable {
                     //Call bullet's shoot method
                     playerBullet.shoot(
                             //Player object's x coordinate/position + the center of the player object (getLength() / 2) which will cause the bullet to come out from the center
-                            player.getX() + player.getLength() / 2,
+                            player.getX() + player.getHitBoxLength() / 2,
                             screenY, //Player object's current Y position
                             playerBullet.UP //Trajectory of the bullet
                     );
