@@ -48,8 +48,8 @@ public class GameEngine extends SurfaceView implements Runnable {
     //The player object
     private Player player;
 
-    //The player bullet
-    private Bullet playerBullet;
+    //The bullet object
+    private Bullet bullet;
 
     //Bricks that the player can use for defensive cover
     private Brick[] bricks = new Brick[100];
@@ -99,7 +99,7 @@ public class GameEngine extends SurfaceView implements Runnable {
         player = new Player(context, screenX, screenY);
 
         //Create the player's bullet
-        playerBullet = new Bullet(screenY);
+        bullet = new Bullet(screenY);
 
         //Create the enemyBullets array
         for (int i = 0; i < enemyBullets.length; i++) {
@@ -107,6 +107,15 @@ public class GameEngine extends SurfaceView implements Runnable {
         }
 
         //Create an army of enemies
+        numEnemies = 0;
+        int maxRow = 5;
+        int maxColumn = 6;
+        for (int row = 0; row < maxRow; row++) {
+            for (int col = 0; col < maxColumn; col++) {
+                enemies[numEnemies] = new Enemy(context, row, col, screenX, screenY);
+                numEnemies++;
+            }
+        }
 
         //Create the defensive covers for the player
     }
@@ -134,6 +143,12 @@ public class GameEngine extends SurfaceView implements Runnable {
             if (endFrame >= 1) {
                 fps = 1000 / endFrame;
             }
+
+//            if (!isPaused) {
+//                if (changeImage) {
+//                    changeImage = false;
+//                }
+//            }
         }
     }
 
@@ -151,10 +166,39 @@ public class GameEngine extends SurfaceView implements Runnable {
         player.update(fps);
 
         //Update the enemies if they're visible
+        for (int i = 0; i < numEnemies; i++) {
+            //If the enemies are alive
+            if (enemies[i].getEnemyLifeStatus()) {
+                //Move the enemy
+                enemies[i].update(fps);
+
+                //If the enemy wants to shoot the player
+                if (enemies[i].shootPlayer(player.getX(), player.getHitBoxLength())) {
+                    //If the enemy shoots
+                    if (enemyBullets[nextBullet].shoot(enemies[i].getEnemyX() + enemies[i].getHitBoxLength() / 2, enemies[i].getEnemyY(), bullet.DOWN)) {
+                        //Increment bullets fired
+                        nextBullet++;
+
+                        //If the max number of enemy bullets have been reached
+                        if (nextBullet == maxEnemyBullets) {
+                            //Reset back to 0
+                            //This stops the spamming of bullets until one completes it's trajectory
+                            //Note: If bullet 0 is active, the shoot() method returns false
+                            nextBullet = 0;
+                        }
+                    }
+                }
+
+                //If the enemy collided with the screen
+                if (enemies[i].getEnemyX() > screenX - enemies[i].getHitBoxLength() || enemies[i].getEnemyX() < 0) {
+                    isCollided = true;
+                }
+            }
+        }
 
         //Update the player's bullet
-        if (playerBullet.getBulletState()) { //If the player has fired a bullet
-            playerBullet.update(fps);
+        if (bullet.getBulletState()) { //If the player has fired a bullet
+            bullet.update(fps);
         }
 
         //Update all of the enemy's bullets if they're active
@@ -164,7 +208,17 @@ public class GameEngine extends SurfaceView implements Runnable {
             }
         }
 
-        //Has an enemy collided with the sides of the screen
+        //If an enemy collided with the sides of the screen
+        if (isCollided) {
+            for (int i = 0; i < numEnemies; i++) {
+                enemies[i].changeDirection();
+
+                //Detect if any enemies have entered the bottom 10th of the screen, the player lost
+                if (enemies[i].getEnemyY() > screenY - screenY / 10) {
+                    didLose = true;
+                }
+            }
+        }
 
         //If the player has 0 lives left
         if (didLose) {
@@ -206,6 +260,12 @@ public class GameEngine extends SurfaceView implements Runnable {
             canvas.drawBitmap(player.getBitmap(), player.getX(), screenY - player.getHitBoxHeight(), paint);
 
             //Draw the enemy
+            for (int i = 0; i < numEnemies; i++) {
+                //if the enemy is alive
+                if (enemies[i].isEnemyAlive) {
+                    canvas.drawBitmap(enemies[i].getEnemyBitmap1(), enemies[i].getEnemyX(), enemies[i].getEnemyY(), paint);
+                }
+            }
 
             //Draw the bricks if they're visible
 
@@ -213,8 +273,8 @@ public class GameEngine extends SurfaceView implements Runnable {
             paint.setColor(Color.argb(255, 255, 0, 0));
 
             //Draw the player's bullets, if they're active
-            if (playerBullet.getBulletState()) {
-                canvas.drawRect(playerBullet.getBullet(), paint);
+            if (bullet.getBulletState()) {
+                canvas.drawRect(bullet.getBullet(), paint);
             }
 
             //Draw the enemy's bullets, if they're active
@@ -268,11 +328,11 @@ public class GameEngine extends SurfaceView implements Runnable {
                 //If the player touches ABOVE the lower 8th of the screen, shoot a bullet
                 if (motionEvent.getY() < screenY - screenY / 8) {
                     //Call bullet's shoot method
-                    playerBullet.shoot(
+                    bullet.shoot(
                             //Player object's x coordinate/position + the center of the player object (getLength() / 2) which will cause the bullet to come out from the center
                             player.getX() + player.getHitBoxLength() / 2,
                             screenY, //Player object's current Y position
-                            playerBullet.UP //Trajectory of the bullet
+                            bullet.UP //Trajectory of the bullet
                     );
                 }
                 break;
