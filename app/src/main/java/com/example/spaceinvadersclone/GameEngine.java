@@ -143,12 +143,6 @@ public class GameEngine extends SurfaceView implements Runnable {
             if (endFrame >= 1) {
                 fps = 1000 / endFrame;
             }
-
-//            if (!isPaused) {
-//                if (changeImage) {
-//                    changeImage = false;
-//                }
-//            }
         }
     }
 

@@ -60,11 +60,11 @@ public class Enemy {
         //Set enemy status to alive
         isEnemyAlive = true;
 
-        int padding = screenX / 25;
+        int padding = screenX / 50;
 
         //Initialize the x and y coordinates of the enemy hit box
         x = column * (hitBoxLength + padding);
-        y = row * (hitBoxLength + padding);
+        y = row * (hitBoxHeight + padding);
 
         //Initialize the bitmap/image
         enemyBitmap1 = BitmapFactory.decodeResource(context.getResources(), R.drawable.enemy1);
@@ -86,7 +86,7 @@ public class Enemy {
         );
 
         //Set the enemy speed
-        enemySpeed = 40;
+        enemySpeed = 60;
     }
 
     public RectF getEnemyHitBox() {
