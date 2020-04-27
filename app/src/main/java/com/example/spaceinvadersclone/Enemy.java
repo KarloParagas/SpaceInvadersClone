@@ -86,7 +86,7 @@ public class Enemy {
         );
 
         //Set the enemy speed
-        enemySpeed = 60;
+        enemySpeed = 35;
     }
 
     public RectF getEnemyHitBox() {
@@ -170,14 +170,14 @@ public class Enemy {
             (playerXPosition > x && playerXPosition < x + playerHitBoxLength)) {
 
             //Enemy will have a more likely of a change to shoot
-            randomNum = random.nextInt(101);
+            randomNum = random.nextInt(300);
             if (randomNum == 0) {
                 return true;
             }
         }
 
         //If an enemy is not near the player, shoot randomly
-        randomNum = random.nextInt(1001);
+        randomNum = random.nextInt(4000);
         if (randomNum == 0) {
             return true;
         }
