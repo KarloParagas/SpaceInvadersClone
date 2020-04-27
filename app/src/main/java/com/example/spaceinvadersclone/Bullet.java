@@ -22,7 +22,7 @@ public class Bullet {
     float speed = 350;
 
     //Dimensions of the bullet
-    private int width = 1;
+    private int width = 4;
     private int height;
 
     //Keep track if the bullet has been shot/destroyed

@@ -19,7 +19,7 @@ public class Brick {
      */
     public Brick(int row, int col, int coverNumber, int screenX, int screenY) {
         //Set the dimensions of a single brick
-        int width = screenX / 110;
+        int width = screenX / 80;
         int height = screenY / 50;
         //Note: These numbers are arbitrary, adjust to preference
 
@@ -27,7 +27,7 @@ public class Brick {
         isBrickOnScreen = true;
 
         //Padding between bricks
-        int brickPadding = 3;
+        int brickPadding = 2;
 
         //Number of defensive covers
         int defensePadding = screenX / 9; //Gap between each defensive brick group
