@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -232,17 +233,83 @@ public class GameEngine extends SurfaceView implements Runnable {
             startLevel();
         }
 
+        /////Check for collision between objects\\\\\
         //Keep track if the player's bullet have collided with the top of the screen
+        if (bullet.getBulletImpactY() < 0) { //If the top of the bullet is less than 0, then it's left the screen
+            bullet.setBulletInactive(); //Set the bullet to inactive
+        }
 
         //Keep track if the enemy's bullet have collided with the bottom of the screen
+        for (int i = 0; i < enemyBullets.length; i++) { //Loop through each individual enemy bullet
+            if (enemyBullets[i].getBulletImpactY() > screenY) { //If the bullet has gone beyond the device's screen y, then it's left the screen
+                enemyBullets[i].setBulletInactive(); //Set the bullet to inactive
+            }
+        }
 
         //Keep track if the player's bullet have collided with an enemy
+        if (bullet.getBulletState()) { //Get the bullet's status
+            for (int i = 0; i < numEnemies; i++) { //Loop through each enemies in the array
+                if (enemies[i].getEnemyLifeStatus()) { //If the enemy is alive
+                    if (RectF.intersects(bullet.getBullet(), enemies[i].getEnemyHitBox())) { //If the bullet's hit box collides with an enemy's hit box
+                        enemies[i].destroyEnemy(); //Destroy that enemy
+                        bullet.setBulletInactive(); //Set the bullet to inactive
+                        score += 10; //Player get's 10 points
+
+                        //Check if the player has won, restart the game
+                        if (score == numEnemies * 10) {
+                            isPaused = true;
+                            score = 0;
+                            playerLives = 3;
+                            startLevel();
+                        }
+                    }
+                }
+            }
+        }
 
         //Keep track if an enemy's bullet have collided with a brick cover
+        for (int i = 0; i < enemyBullets.length; i++) { //Loop through each of the enemy bullets array
+            if (enemyBullets[i].getBulletState()) { //If the bullet is active
+                for (int j = 0; j < numBricks; j++) { //Loop through each bullet
+                    if (bricks[j].getBrickVisibility()) { //If that brick in the array is visible
+                        if (RectF.intersects(enemyBullets[i].getBullet(), bricks[j].getBrickHitBox())) { //If the enemy bullet collides with a brick
+                            enemyBullets[i].setBulletInactive(); //Set that enemy bullet to inactive
+                            bricks[j].setBrickToInvisible(); //Set the brick to invisible, destroy the brick
+                        }
+                    }
+                }
+            }
+        }
 
         //Keep track if an player's bullet have collided with a brick cover
+        if (bullet.getBulletState()) { //If the bullet is active
+            for (int i = 0; i < numBricks; i++) { //Loop through each of the bricks in the array
+                if (bricks[i].getBrickVisibility()) { //If the brick is visible
+                    if (RectF.intersects(bullet.getBullet(), bricks[i].getBrickHitBox())) { //If the bullet collides with a brick
+                        bullet.setBulletInactive(); //Set the bullet to inactive
+                        bricks[i].setBrickToInvisible(); //Set the brick to invisible
+                    }
+                }
+            }
+        }
 
         //Keep track if the enemy's bullet have collided with the player
+        for (int i = 0; i < enemyBullets.length; i++) { //Loop through each of the enemy's bullets in the array
+            if (enemyBullets[i].getBulletState()) { //If the enemy bullet is active
+                if (RectF.intersects(player.getPlayerHitBox(), enemyBullets[i].getBullet())) { //If the enemy's bullet collides with the player
+                    enemyBullets[i].setBulletInactive(); //Set the bullet to inactive
+                    playerLives--; //Decrement the player's lives
+
+                    //If the player has 0 lives left, the game is over
+                    if (playerLives == 0) {
+                        isPaused = true;
+                        playerLives = 3;
+                        score = 0;
+                        startLevel();
+                    }
+                }
+            }
+        }
     }
 
     /**
