@@ -52,7 +52,7 @@ public class GameEngine extends SurfaceView implements Runnable {
     private Bullet bullet;
 
     //Bricks that the player can use for defensive cover
-    private Brick[] bricks = new Brick[100];
+    private Brick[] bricks = new Brick[500];
     private int numBricks;
 
     //Max amount of enemies
@@ -118,6 +118,18 @@ public class GameEngine extends SurfaceView implements Runnable {
         }
 
         //Create the defensive covers for the player
+        numBricks = 0;
+        int maxGroupNumber = 4;
+        int maxBrickRow = 5;
+        int maxBrickColumn = 10;
+        for (int groupNumber = 0; groupNumber < maxGroupNumber; groupNumber++) {
+            for (int row = 0; row < maxBrickRow; row++) {
+                for (int col = 0; col < maxBrickColumn; col++) {
+                    bricks[numBricks] = new Brick(row, col, groupNumber, screenX, screenY);
+                    numBricks++;
+                }
+            }
+        }
     }
 
     /**
@@ -262,6 +274,11 @@ public class GameEngine extends SurfaceView implements Runnable {
             }
 
             //Draw the bricks if they're visible
+            for (int i = 0; i < numBricks; i++) {
+                if (bricks[i].getBrickVisibility()) {
+                    canvas.drawRect(bricks[i].getBrickHitBox(), paint);
+                }
+            }
 
             //Change the brush color
             paint.setColor(Color.argb(255, 255, 0, 0));
