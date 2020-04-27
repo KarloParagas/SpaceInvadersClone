@@ -164,7 +164,7 @@ public class GameEngine extends SurfaceView implements Runnable {
      */
     private void update() {
         //Check if the enemy has collided with the sides of the screen
-        boolean isCollided = false;
+        boolean hasEnemyCollidedWithScreen = false;
 
         //Keep track if the player has lost
         boolean didLose = false;
@@ -196,9 +196,9 @@ public class GameEngine extends SurfaceView implements Runnable {
                     }
                 }
 
-                //If the enemy collided with the screen
+                //If the enemy collides with the screen
                 if (enemies[i].getEnemyX() > screenX - enemies[i].getHitBoxLength() || enemies[i].getEnemyX() < 0) {
-                    isCollided = true;
+                    hasEnemyCollidedWithScreen = true;
                 }
             }
         }
@@ -216,7 +216,7 @@ public class GameEngine extends SurfaceView implements Runnable {
         }
 
         //If an enemy collided with the sides of the screen
-        if (isCollided) {
+        if (hasEnemyCollidedWithScreen) {
             for (int i = 0; i < numEnemies; i++) {
                 enemies[i].changeDirection();
 
@@ -226,6 +226,13 @@ public class GameEngine extends SurfaceView implements Runnable {
                 }
             }
         }
+
+        //If the player collides with the sides of the screen
+        //If the player collides with the screen
+        if (player.getPlayerHitBox().right > screenX || player.getPlayerHitBox().left < 0) {
+            player.setPlayerMovement(0);
+        }
+
 
         //If the player has 0 lives left
         if (didLose) {
@@ -361,10 +368,6 @@ public class GameEngine extends SurfaceView implements Runnable {
                     canvas.drawRect(enemyBullets[i].getBullet(), paint);
                 }
             }
-
-            //Draw the remaining lives
-
-            //Draw the remaining lives of the player
 
             //Change the brush color and set the text size
             paint.setColor(Color.argb(255, 249, 129, 0));
