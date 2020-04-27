@@ -348,7 +348,7 @@ public class GameEngine extends SurfaceView implements Runnable {
             }
 
             //Change the brush color
-            paint.setColor(Color.argb(255, 255, 0, 0));
+            paint.setColor(Color.argb(255, 255, 187, 0));
 
             //Draw the player's bullets, if they're active
             if (bullet.getBulletState()) {
