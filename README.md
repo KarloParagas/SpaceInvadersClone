@@ -1,2 +1,2 @@
-# SpaceInvadersClone
-A simple Space Invaders clone to learn game programming.
+# Space Invaders
+A simple Space Invaders clone to get more familiar with game programming.
